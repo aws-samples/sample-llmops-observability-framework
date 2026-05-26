@@ -1,0 +1,140 @@
+# Guardrail Configuration
+# This file defines the content policies, topic restrictions, and sensitive information handling
+
+guardrail:
+  description: "Content filtering and security guardrails for LLM applications"
+  blocked_input_messaging: "This request violates our content policy and cannot be processed."
+  blocked_outputs_messaging: "This response was blocked by our content policy for safety reasons."
+
+# Content Policy Configuration
+content_policy:
+  tier: "STANDARD"  # Options: STANDARD, ADVANCED
+  filters:
+    - type: "HATE"
+      input_strength: "HIGH"
+      output_strength: "HIGH"
+    - type: "VIOLENCE"
+      input_strength: "HIGH"
+      output_strength: "HIGH"
+    - type: "SEXUAL"
+      input_strength: "HIGH"
+      output_strength: "HIGH"
+    - type: "MISCONDUCT"
+      input_strength: "MEDIUM"
+      output_strength: "MEDIUM"
+    - type: "PROMPT_ATTACK"
+      input_strength: "HIGH"
+      output_strength: "NONE"
+
+# Topic Policy Configuration
+topic_policy:
+  tier: "STANDARD"
+  topics:
+    - name: "Financial Advice"
+      definition: "Providing specific financial investment advice or recommendations"
+      examples:
+        - "Buy this stock"
+        - "Invest in cryptocurrency"
+        - "Sell your bonds now"
+      type: "DENY"
+    
+    - name: "Legal Advice"
+      definition: "Providing specific legal counsel or recommendations"
+      examples:
+        - "You should sue"
+        - "This contract is invalid"
+        - "File a lawsuit"
+      type: "DENY"
+    
+    - name: "Medical Advice"
+      definition: "Providing specific medical diagnosis or treatment recommendations"
+      examples:
+        - "You have this disease"
+        - "Take this medication"
+        - "Stop your treatment"
+      type: "DENY"
+    
+    - name: "Personal Information"
+      definition: "Requesting or sharing personal identifiable information"
+      examples:
+        - "What's your PIN"
+        - "Share your address"
+        - "Tell me your password"
+      type: "DENY"
+    
+    - name: "Illegal Activities"
+      definition: "Instructions for illegal activities or harmful actions"
+      examples:
+        - "How to hack"
+        - "Make explosives"
+        - "Bypass security"
+      type: "DENY"
+
+# Sensitive Information Policy
+sensitive_information_policy:
+  # PII Entities to anonymize
+  pii_entities:
+    - type: "EMAIL"
+      action: "ANONYMIZE"
+    - type: "PHONE"
+      action: "ANONYMIZE"
+    - type: "CREDIT_DEBIT_CARD_NUMBER"
+      action: "ANONYMIZE"
+    - type: "ADDRESS"
+      action: "ANONYMIZE"
+    - type: "NAME"
+      action: "ANONYMIZE"
+    - type: "USERNAME"
+      action: "ANONYMIZE"
+    - type: "PASSWORD"
+      action: "ANONYMIZE"
+    - type: "DRIVER_ID"
+      action: "ANONYMIZE"
+    - type: "CREDIT_DEBIT_CARD_CVV"
+      action: "ANONYMIZE"
+    - type: "CREDIT_DEBIT_CARD_EXPIRY"
+      action: "ANONYMIZE"
+    - type: "IP_ADDRESS"
+      action: "ANONYMIZE"
+    - type: "MAC_ADDRESS"
+      action: "ANONYMIZE"
+    - type: "URL"
+      action: "ANONYMIZE"
+    - type: "AWS_ACCESS_KEY"
+      action: "ANONYMIZE"
+    - type: "AWS_SECRET_KEY"
+      action: "ANONYMIZE"
+    - type: "AGE"
+      action: "ANONYMIZE"
+    - type: "US_SOCIAL_SECURITY_NUMBER"
+      action: "ANONYMIZE"
+    - type: "US_PASSPORT_NUMBER"
+      action: "ANONYMIZE"
+    - type: "US_BANK_ACCOUNT_NUMBER"
+      action: "ANONYMIZE"
+  
+  # Custom regex patterns for organization-specific data
+  regex_patterns:
+    - name: "EmployeeID"
+      description: "Employee ID Pattern"
+      pattern: "EMP-[0-9]{6}"
+      action: "ANONYMIZE"
+    
+    - name: "ProjectCode"
+      description: "Internal Project Code"
+      pattern: "PROJ-[A-Z]{3}-[0-9]{4}"
+      action: "ANONYMIZE"
+
+# Word Policy Configuration
+word_policy:
+  managed_word_lists:
+    - type: "PROFANITY"
+  
+  custom_words:
+    - "confidential"
+    - "proprietary"
+    - "classified"
+    - "internal"
+    - "restricted"
+    - "sensitive"
+    - "trade-secret"
