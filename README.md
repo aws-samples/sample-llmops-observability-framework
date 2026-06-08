@@ -2,7 +2,7 @@
 
 > ⚠️ **Important**: This project is provided as sample code for educational purposes.
 > It is NOT intended for production use without additional security hardening.
-> See [SECURITY.md](SECURITY.md) for production recommendations.
+> See [SECURITY.md](SECURITY.md) for production recommendations
 
 A comprehensive, modular, and config-driven observability solution for Amazon Bedrock LLM applications with built-in security guardrails.
 
