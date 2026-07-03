@@ -70,7 +70,7 @@ class GuardrailBedrockWrapper:
             response = self.secrets_client.get_secret_value(SecretId=secret_name)
             self._guardrail_cache = json.loads(response["SecretString"])
             
-            logger.info(f"Successfully loaded guardrail config: {self._guardrail_cache.get('guardrail_id')}")
+            logger.info("Successfully loaded guardrail config from Secrets Manager")
             return self._guardrail_cache
             
         except ClientError as e:
@@ -112,8 +112,8 @@ class GuardrailBedrockWrapper:
             "guardrailVersion": guardrail_config.get("guardrail_version", "DRAFT"),
             "trace": "enabled",
         }
-        
-        logger.info(f"✅ GUARDRAILS ACTIVE - ID: {guardrail_config.get('guardrail_id')}")
+
+        logger.info("✅ GUARDRAILS ACTIVE")
         return params
 
     def invoke_model(
@@ -156,7 +156,7 @@ class GuardrailBedrockWrapper:
             kwargs["guardrailVersion"] = guardrail_config.get("guardrail_version", "DRAFT")
             kwargs["trace"] = "ENABLED"
 
-            logger.info(f"✅ GUARDRAILS ACTIVE - ID: {guardrail_config.get('guardrail_id')}")
+            logger.info("✅ GUARDRAILS ACTIVE")
         else:
             logger.warning("⚠️ GUARDRAILS DISABLED - Proceeding without guardrails")
 
