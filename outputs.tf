@@ -79,6 +79,21 @@ output "grafana_workspace_arn" {
   value       = var.enable_grafana ? module.grafana[0].workspace_arn : null
 }
 
+output "grafana_core_dashboard_json" {
+  description = "Grafana Core Monitoring dashboard JSON (import via Grafana UI or API)"
+  value       = var.enable_grafana ? module.grafana[0].core_dashboard_json : null
+}
+
+output "grafana_identity_dashboard_json" {
+  description = "Grafana Identity Tracking dashboard JSON (import via Grafana UI or API)"
+  value       = var.enable_grafana ? module.grafana[0].identity_dashboard_json : null
+}
+
+output "grafana_log_analysis_dashboard_json" {
+  description = "Grafana Log Analysis dashboard JSON (import via Grafana UI or API)"
+  value       = var.enable_grafana ? module.grafana[0].log_analysis_dashboard_json : null
+}
+
 # Alarm Outputs
 output "alarm_sns_topic_arn" {
   description = "ARN of the SNS topic for alarm notifications"

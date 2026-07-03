@@ -290,11 +290,11 @@ class AILogAnalyzer:
                     "Dimensions": dimensions,
                 })
 
-            severity_map = {"low": 1, "medium": 2, "high": 3, "critical": 4}
+            severity_map = {"low": 2, "medium": 5, "high": 8, "critical": 10}
             severity = ai_insights.get("severity", "low")
             metric_data.append({
                 "MetricName": "AISeverityScore",
-                "Value": severity_map.get(severity, 1),
+                "Value": severity_map.get(severity, 2),
                 "Unit": "None",
                 "Dimensions": dimensions,
             })

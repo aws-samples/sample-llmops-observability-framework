@@ -26,12 +26,19 @@ A comprehensive, modular, and config-driven observability solution for Amazon Be
 ├── variables.tf                 # Input variables
 ├── locals.tf                    # Local values and data sources
 ├── outputs.tf                   # Output values
+├── backend.tf.example           # Remote state backend example
+├── requirements.txt             # Python dependencies
 ├── config/
 │   └── guardrails.yaml         # Guardrail configuration
 ├── environments/
 │   ├── dev.tfvars              # Development environment
 │   ├── test.tfvars             # Test environment
 │   └── prod.tfvars             # Production environment
+├── examples/
+│   ├── basic_usage.py          # Python wrapper usage examples
+│   └── enforce_wrapper_usage.py # Guardrail enforcement patterns
+├── tests/
+│   └── test_guardrail_bedrock_wrapper.py  # Unit tests
 ├── modules/
 │   ├── iam/                    # IAM roles and policies
 │   ├── logging/                # CloudWatch and S3 logging
@@ -51,7 +58,15 @@ A comprehensive, modular, and config-driven observability solution for Amazon Be
 - Terraform >= 1.0
 - AWS CLI configured
 - Python 3.11+ (for wrapper)
-- boto3 library
+- boto3 library (`pip install -r requirements.txt`)
+
+### Remote State (Recommended for Teams)
+
+Copy `backend.tf.example` to `backend.tf` and configure your S3 bucket and DynamoDB table for state locking:
+```bash
+cp backend.tf.example backend.tf
+# Edit backend.tf with your bucket/table names
+```
 
 ### Deployment
 
@@ -198,6 +213,8 @@ Grafana provides 3 dashboards mirroring CloudWatch: Core Monitoring, Identity Tr
 terraform output grafana_workspace_endpoint
 ```
 
+**Importing Dashboards:** The module outputs dashboard JSON definitions (`grafana_core_dashboard_json`, etc.) that you can import into your Grafana workspace via the Grafana UI (Dashboards > Import) or the Grafana HTTP API. See the Terraform outputs for the JSON payloads.
+
 **Authentication Note:** The default auth provider is `SAML`. If you want to use `AWS_SSO`, you must first enable AWS IAM Identity Center in your account:
 ```hcl
 grafana_authentication_providers = ["AWS_SSO"]   # Requires IAM Identity Center
@@ -327,12 +344,24 @@ terraform destroy -var-file=environments/dev.tfvars
 
 > **Note**: If you have cross-account OAM links or subscription filters pointing to this account, remove those in the remote accounts first to avoid orphaned resources.
 
+## Testing
+
+Run the unit tests for the Python wrapper:
+
+```bash
+pip install -r requirements.txt
+python3 -m pytest tests/ -v
+```
+
+The tests use `unittest.mock` to mock AWS calls — no real AWS credentials needed.
+
 ## Contributing
 
 1. Create feature branch
 2. Update relevant modules
-3. Test in dev environment
-4. Submit pull request
+3. Run tests (`python3 -m pytest tests/ -v`)
+4. Test in dev environment
+5. Submit pull request
 
 ## License
 

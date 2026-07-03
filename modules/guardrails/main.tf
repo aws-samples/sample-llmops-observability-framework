@@ -4,9 +4,9 @@ data "aws_caller_identity" "current" {}
 # Bedrock Guardrails for LLM Security
 resource "aws_bedrock_guardrail" "content_filter" {
   name                      = var.guardrail_name
-  blocked_input_messaging   = lookup(var.guardrail_config, "blocked_input_messaging", "This request violates our content policy.")
-  blocked_outputs_messaging = lookup(var.guardrail_config, "blocked_outputs_messaging", "This response was blocked by our content policy.")
-  description               = lookup(var.guardrail_config, "description", "Content filtering for LLM applications")
+  blocked_input_messaging   = try(var.guardrail_config.guardrail.blocked_input_messaging, lookup(var.guardrail_config, "blocked_input_messaging", "This request violates our content policy."))
+  blocked_outputs_messaging = try(var.guardrail_config.guardrail.blocked_outputs_messaging, lookup(var.guardrail_config, "blocked_outputs_messaging", "This response was blocked by our content policy."))
+  description               = try(var.guardrail_config.guardrail.description, lookup(var.guardrail_config, "description", "Content filtering for LLM applications"))
 
   # Content Policy Configuration
   content_policy_config {
