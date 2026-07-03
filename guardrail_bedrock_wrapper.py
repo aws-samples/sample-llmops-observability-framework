@@ -117,42 +117,53 @@ class GuardrailBedrockWrapper:
         return params
 
     def invoke_model(
-        self, 
-        model_id: str, 
-        body: Union[str, Dict], 
+        self,
+        model_id: str,
+        body: Union[str, Dict],
         **kwargs
     ) -> Dict:
         """
         Invoke Bedrock model with guardrails enforced.
-        
+
         Args:
             model_id: Bedrock model identifier
             body: Request body (string or dict)
             **kwargs: Additional parameters for invoke_model
-            
+
         Returns:
             Response from Bedrock API
-            
+
         Raises:
             ValueError: If guardrails are enabled but config is missing
         """
         logger.info(f"🔒 Intercepting invoke_model call for {model_id}")
-        
+
         # Convert body to dict if string
         body_dict = json.loads(body) if isinstance(body, str) else body.copy()
-        
-        # Add guardrails
-        body_dict = self._add_guardrails(body_dict)
 
-        # Enable trace to see guardrail blocking details
-        extra_headers = kwargs.get("ExtraHeaders", {})
-        extra_headers["X-Amzn-Bedrock-Trace"] = "ENABLED"
-        kwargs["ExtraHeaders"] = extra_headers
+        # Add guardrail parameters at the API call level (not inside body)
+        if self._guardrail_enabled:
+            guardrail_config = self._get_guardrail_config()
+
+            if not guardrail_config or not guardrail_config.get("guardrail_id"):
+                logger.error("❌ GUARDRAIL CONFIG MISSING - Cannot proceed safely")
+                raise ValueError(
+                    "Guardrails are enabled but configuration is missing. "
+                    "This is a security violation. Check Secrets Manager."
+                )
+
+            kwargs["guardrailIdentifier"] = guardrail_config.get("guardrail_id")
+            kwargs["guardrailVersion"] = guardrail_config.get("guardrail_version", "DRAFT")
+            kwargs["trace"] = "ENABLED"
+
+            logger.info(f"✅ GUARDRAILS ACTIVE - ID: {guardrail_config.get('guardrail_id')}")
+        else:
+            logger.warning("⚠️ GUARDRAILS DISABLED - Proceeding without guardrails")
 
         try:
             response = self.bedrock_rt.invoke_model(
-                modelId=model_id, 
-                body=json.dumps(body_dict), 
+                modelId=model_id,
+                body=json.dumps(body_dict),
                 **kwargs
             )
             logger.info(f"✅ Model invocation successful for {model_id}")

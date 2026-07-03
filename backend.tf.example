@@ -1,0 +1,12 @@
+# Example remote backend configuration for production use.
+# Copy this file to backend.tf and customize the values.
+
+terraform {
+  backend "s3" {
+    bucket         = "your-terraform-state-bucket"
+    key            = "llmops/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
+  }
+}
