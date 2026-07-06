@@ -370,6 +370,6 @@ This library is licensed under the MIT-0 License. See the [LICENSE](LICENSE) fil
 ## Support
 
 For issues or questions:
-- Create GitHub issue
-- Contact platform team
-- Check CloudWatch logs
+- Open a [GitHub issue](../../issues)
+- Review [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment guidance
+- Check CloudWatch logs for runtime diagnostics
